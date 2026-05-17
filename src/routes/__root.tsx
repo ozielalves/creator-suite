@@ -9,6 +9,8 @@ import { Suspense, useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
 import { SwrProvider } from "@/modules/Common/providers/SwrProvider";
+import { ThemeProvider } from "@/modules/Common/providers/ThemeProvider";
+import { THEME_INIT_SCRIPT } from "@/modules/Common/hooks/useThemeStore";
 import { AuthGate } from "@/modules/Auth";
 import { Spinner } from "@/modules/UI";
 import { bootstrapMockBackend } from "@/modules/Common/services/bootstrap";
@@ -29,8 +31,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
       <body>
@@ -53,23 +56,25 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SwrProvider>
-        {ready ? (
-          <AuthGate>
-            <Suspense
-              fallback={
-                <div className="min-h-screen flex items-center justify-center">
-                  <Spinner size="lg" />
-                </div>
-              }
-            >
-              <Outlet />
-            </Suspense>
-          </AuthGate>
-        ) : (
-          <div className="min-h-screen" />
-        )}
-      </SwrProvider>
+      <ThemeProvider>
+        <SwrProvider>
+          {ready ? (
+            <AuthGate>
+              <Suspense
+                fallback={
+                  <div className="min-h-screen flex items-center justify-center">
+                    <Spinner size="lg" />
+                  </div>
+                }
+              >
+                <Outlet />
+              </Suspense>
+            </AuthGate>
+          ) : (
+            <div className="min-h-screen" />
+          )}
+        </SwrProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

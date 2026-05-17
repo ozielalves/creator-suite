@@ -53,4 +53,9 @@ describe("AppShell", () => {
     fireEvent.click(screen.getByRole("button", { name: "Sign out" }));
     expect(logout).toHaveBeenCalled();
   });
+
+  it("renders dark mode toggle", () => {
+    render(<AppShell>child</AppShell>);
+    expect(screen.getAllByRole("switch", { name: "Toggle dark mode" }).length).toBeGreaterThan(0);
+  });
 });

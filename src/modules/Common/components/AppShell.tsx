@@ -12,6 +12,7 @@ import { useAuthStore } from "@/modules/Auth";
 import { Avatar } from "@/modules/UI";
 import { cn } from "@/lib/utils";
 import { APP_NAME } from "@/config/env";
+import { ThemeToggle } from "./ThemeToggle";
 
 type NavItem = {
   to: "/dashboard" | "/messaging" | "/analytics" | "/notifications" | "/subscription";
@@ -38,11 +39,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         aria-label="Primary"
         className="hidden md:flex w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground"
       >
-        <div className="flex items-center gap-2 px-5 h-16 border-b border-sidebar-border">
-          <div className="h-8 w-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
-            C
+        <div className="flex items-center justify-between px-5 h-16 border-b border-sidebar-border">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
+              C
+            </div>
+            <span className="font-semibold tracking-tight text-sm">{APP_NAME}</span>
           </div>
-          <span className="font-semibold tracking-tight text-sm">{APP_NAME}</span>
+          <ThemeToggle />
         </div>
 
         <nav className="flex-1 px-3 py-4">
@@ -110,6 +114,7 @@ function MobileNav() {
           </div>
           <span className="text-sm font-semibold">{APP_NAME}</span>
         </div>
+        <ThemeToggle />
       </div>
       <nav className="overflow-x-auto px-3 pb-2">
         <ul className="flex items-center gap-1 min-w-max">
