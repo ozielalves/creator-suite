@@ -20,8 +20,7 @@ type AuthState = {
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   status: "idle",
-  setUser: (user) =>
-    set({ user, status: user ? "authenticated" : "unauthenticated" }),
+  setUser: (user) => set({ user, status: user ? "authenticated" : "unauthenticated" }),
   hydrate: async () => {
     AuthService.hydrate();
     if (!AuthService.isAuthenticated()) {

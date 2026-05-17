@@ -1,4 +1,5 @@
-import { useState, type FormEvent } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Mail, Lock, User } from "lucide-react";
 import { Button, Input } from "@/modules/UI";
@@ -6,64 +7,71 @@ import { AuthService } from "../services/AuthService";
 import { useAuthStore } from "../hooks/useAuthStore";
 import { LOGIN_ROUTE } from "../constants";
 import { AuthShell } from "./LoginPage";
+import { registerSchema, type RegisterFormValues } from "../validation";
+import { ErrorService } from "../services/ErrorService";
 
 export function RegisterPage() {
   const navigate = useNavigate();
   const setUser = useAuthStore((s) => s.setUser);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { name: "", email: "", password: "" },
+  });
 
-  async function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  async function onSubmit(data: RegisterFormValues) {
     try {
-      const user = await AuthService.register({ name, email, password });
+      const user = await AuthService.register(data);
       setUser(user);
       navigate({ to: "/dashboard" });
     } catch (err) {
-      setError((err as Error).message ?? "Unable to register");
-    } finally {
-      setLoading(false);
+      setError("root", { message: ErrorService.toSafeAuthMessage(err, "register") });
     }
   }
 
   return (
     <AuthShell title="Create your account" subtitle="Start building your audience today">
-      <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
+        {errors.root?.message ? (
+          <p className="text-xs text-destructive" role="alert">
+            {errors.root.message}
+          </p>
+        ) : null}
         <Input
           label="Full name"
           placeholder="Alex Morgan"
+          autoComplete="name"
+          maxLength={100}
           leftIcon={<User className="h-4 w-4" />}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
+          error={errors.name?.message}
+          {...register("name")}
         />
         <Input
           label="Email"
           type="email"
           autoComplete="email"
           placeholder="you@example.com"
+          maxLength={254}
           leftIcon={<Mail className="h-4 w-4" />}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          error={errors.email?.message}
+          {...register("email")}
         />
         <Input
           label="Password"
           type="password"
           autoComplete="new-password"
           placeholder="Create a password"
+          maxLength={128}
+          hint="At least 8 characters with upper, lower, and a number"
           leftIcon={<Lock className="h-4 w-4" />}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          error={error ?? undefined}
+          error={errors.password?.message}
+          {...register("password")}
         />
-        <Button type="submit" isLoading={loading} fullWidth size="lg">
+        <Button type="submit" isLoading={isSubmitting} fullWidth size="lg">
           Create account
         </Button>
       </form>

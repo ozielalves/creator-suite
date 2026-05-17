@@ -36,6 +36,11 @@ describe("AuthService", () => {
     expect(httpMock.setAuthToken).toHaveBeenCalledWith("stored-token");
   });
 
+  it("login rejects invalid credentials before calling the API", async () => {
+    await expect(AuthService.login({ email: "not-valid", password: "x" })).rejects.toThrow();
+    expect(httpMock.post).not.toHaveBeenCalled();
+  });
+
   it("login persists token and returns user", async () => {
     httpMock.post.mockResolvedValue({ token: "jwt", user });
 
@@ -58,13 +63,13 @@ describe("AuthService", () => {
 
     await AuthService.register({
       email: "new@creator.studio",
-      password: "secret",
+      password: "SecretPass1",
       name: "New User",
     });
 
     expect(httpMock.post).toHaveBeenCalledWith("/auth/register", {
       email: "new@creator.studio",
-      password: "secret",
+      password: "SecretPass1",
       name: "New User",
     });
   });

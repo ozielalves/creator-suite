@@ -1,11 +1,18 @@
 import { HttpClient } from "../../Common/services/HttpClient";
 import { AUTH_TOKEN_STORAGE_KEY } from "../constants";
-import type {
-  AuthResponse,
-  AuthUser,
-  LoginCredentials,
-  RegisterCredentials,
-} from "../types";
+import {
+  parseForgotPasswordEmail,
+  parseLoginCredentials,
+  parseRegisterCredentials,
+} from "../validation";
+import type { AuthResponse, AuthUser, LoginCredentials, RegisterCredentials } from "../types";
+
+function assertValid<T>(result: { success: boolean; data?: T; error?: unknown }): T {
+  if (!result.success) {
+    throw result.error;
+  }
+  return result.data as T;
+}
 
 /**
  * AuthService — singleton orchestrating credential exchange and token storage.
@@ -32,19 +39,22 @@ class AuthServiceImpl {
   }
 
   async login(credentials: LoginCredentials): Promise<AuthUser> {
-    const res = await HttpClient.post<AuthResponse>("/auth/login", credentials);
+    const parsed = assertValid<LoginCredentials>(parseLoginCredentials(credentials));
+    const res = await HttpClient.post<AuthResponse>("/auth/login", parsed);
     this.persist(res);
     return res.user;
   }
 
   async register(credentials: RegisterCredentials): Promise<AuthUser> {
-    const res = await HttpClient.post<AuthResponse>("/auth/register", credentials);
+    const parsed = assertValid<RegisterCredentials>(parseRegisterCredentials(credentials));
+    const res = await HttpClient.post<AuthResponse>("/auth/register", parsed);
     this.persist(res);
     return res.user;
   }
 
   async forgotPassword(email: string): Promise<void> {
-    await HttpClient.post("/auth/forgot-password", { email });
+    const parsed = assertValid<{ email: string }>(parseForgotPasswordEmail(email));
+    await HttpClient.post("/auth/forgot-password", parsed);
   }
 
   async me(): Promise<AuthUser> {

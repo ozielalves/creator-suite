@@ -25,5 +25,11 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     }
   }, [status, pathname, navigate]);
 
+  const isPublic = PUBLIC_ROUTES.includes(pathname);
+  const isResolving = status === "idle" || status === "loading";
+  if (!isPublic && (isResolving || status === "unauthenticated")) {
+    return null;
+  }
+
   return <>{children}</>;
 }

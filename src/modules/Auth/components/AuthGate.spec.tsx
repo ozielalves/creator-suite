@@ -25,7 +25,21 @@ describe("AuthGate", () => {
     });
   });
 
-  it("renders children", () => {
+  it("renders children on public routes while auth resolves", () => {
+    pathname = "/login";
+    useAuthStore.setState({ status: "idle" });
+
+    render(
+      <AuthGate>
+        <p>Public content</p>
+      </AuthGate>,
+    );
+    expect(screen.getByText("Public content")).toBeInTheDocument();
+  });
+
+  it("renders children when authenticated on protected routes", () => {
+    useAuthStore.setState({ status: "authenticated" });
+
     render(
       <AuthGate>
         <p>Protected content</p>
@@ -47,6 +61,14 @@ describe("AuthGate", () => {
 
     render(<AuthGate>child</AuthGate>);
     expect(mockNavigate).toHaveBeenCalledWith({ to: "/login" });
+    expect(screen.queryByText("child")).not.toBeInTheDocument();
+  });
+
+  it("does not render protected content while auth is loading", () => {
+    useAuthStore.setState({ status: "loading" });
+
+    render(<AuthGate>child</AuthGate>);
+    expect(screen.queryByText("child")).not.toBeInTheDocument();
   });
 
   it("allows public auth routes without redirecting", () => {

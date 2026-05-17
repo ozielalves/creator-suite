@@ -265,7 +265,7 @@ bun install
 bun run dev
 ```
 
-Open `http://localhost:3000`. Sign in with any email and password (mock backend accepts all credentials).
+Open `http://localhost:3000`. Copy `.env.example` to `.env`, then sign in with the demo account (`oziel@test.com` / `12345!@`) or register a new account (password must meet complexity rules).
 
 ### Build for production
 

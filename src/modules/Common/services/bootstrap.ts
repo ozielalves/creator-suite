@@ -4,7 +4,8 @@
  * HttpClient.configure() level — services are agnostic.
  */
 import { installMockBackend, registerHandler, MockError } from "./MockBackend";
-import { API_BASE } from "../../../config/env";
+import { API_BASE, DEMO_LOGIN_EMAIL, DEMO_LOGIN_PASSWORD } from "@/config/env";
+import { loginSchema, registerSchema, forgotPasswordSchema } from "../../Auth/validation";
 
 // ---- Types ----
 export type MockUser = {
@@ -58,11 +59,18 @@ const iso = (offsetMin: number) => new Date(now - offsetMin * 60_000).toISOStrin
 
 const currentUser: MockUser = {
   id: "u_me",
-  email: "alex@creator.studio",
+  email: DEMO_LOGIN_EMAIL,
   name: "Alex Morgan",
   avatarUrl: null,
   plan: "pro",
 };
+
+type MockAccount = { password: string; user: MockUser };
+
+/** In-memory accounts for local dev — passwords are plaintext by design in the mock only. */
+const mockAccounts = new Map<string, MockAccount>([
+  [DEMO_LOGIN_EMAIL, { password: DEMO_LOGIN_PASSWORD, user: currentUser }],
+]);
 
 const conversations: MockConversation[] = [
   {
@@ -297,16 +305,43 @@ function registerAll() {
 
   // Auth
   registerHandler("POST", path("/auth/login"), ({ body }) => {
-    const { email } = (body ?? {}) as { email?: string; password?: string };
-    if (!email) throw new MockError(400, "Email required");
-    return { token: "mock.jwt.token", user: { ...currentUser, email } };
+    const parsed = loginSchema.safeParse(body ?? {});
+    if (!parsed.success) {
+      throw new MockError(400, parsed.error.errors[0]?.message ?? "Invalid input");
+    }
+    const { email, password } = parsed.data;
+    const account = mockAccounts.get(email);
+    if (!account || account.password !== password) {
+      throw new MockError(401, "Invalid email or password");
+    }
+    return { token: "mock.jwt.token", user: account.user };
   });
   registerHandler("POST", path("/auth/register"), ({ body }) => {
-    const { email, name } = (body ?? {}) as { email?: string; name?: string };
-    if (!email || !name) throw new MockError(400, "Missing fields");
-    return { token: "mock.jwt.token", user: { ...currentUser, email, name } };
+    const parsed = registerSchema.safeParse(body ?? {});
+    if (!parsed.success) {
+      throw new MockError(400, parsed.error.errors[0]?.message ?? "Invalid input");
+    }
+    const { email, name, password } = parsed.data;
+    if (mockAccounts.has(email)) {
+      throw new MockError(409, "An account with this email already exists");
+    }
+    const user: MockUser = {
+      id: `u_${Date.now()}`,
+      email,
+      name,
+      avatarUrl: null,
+      plan: "free",
+    };
+    mockAccounts.set(email, { password, user });
+    return { token: "mock.jwt.token", user };
   });
-  registerHandler("POST", path("/auth/forgot-password"), () => ({ ok: true }));
+  registerHandler("POST", path("/auth/forgot-password"), ({ body }) => {
+    const parsed = forgotPasswordSchema.safeParse(body ?? {});
+    if (!parsed.success) {
+      throw new MockError(400, parsed.error.errors[0]?.message ?? "Invalid input");
+    }
+    return { ok: true };
+  });
   registerHandler("GET", path("/auth/me"), () => currentUser);
 
   // Dashboard
