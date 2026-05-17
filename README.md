@@ -53,19 +53,19 @@ Core principles:
 
 ## Tech Stack
 
-| Layer | Choice | Rationale |
-|-------|--------|-----------|
-| Framework | React 19 + TanStack Start | Full-stack React with file-based routing, SSR/SSG support, and typed server functions |
-| Language | TypeScript (strict) | Compile-time safety; self-documenting APIs |
-| Styling | Tailwind CSS v4 | Utility-first, design-token-driven, minimal CSS overhead |
-| Components | Radix UI primitives | Accessible, unstyled headless components as building blocks |
-| State (server) | SWR | Lightweight data fetching with caching, deduping, and revalidation |
-| State (client) | Zustand | Minimal, scalable global state without boilerplate |
-| Charts | Recharts | Declarative React charting for dashboard analytics |
-| Forms | React Hook Form + Zod | Performant forms with schema validation |
-| Icons | Lucide React | Consistent, lightweight SVG icon set |
-| Testing | Vitest + Testing Library | Fast unit tests with JSDOM and React Testing Library |
-| Linting | ESLint + Prettier | Consistent code style and catch-at-build-time errors |
+| Layer          | Choice                    | Rationale                                                                             |
+| -------------- | ------------------------- | ------------------------------------------------------------------------------------- |
+| Framework      | React 19 + TanStack Start | Full-stack React with file-based routing, SSR/SSG support, and typed server functions |
+| Language       | TypeScript (strict)       | Compile-time safety; self-documenting APIs                                            |
+| Styling        | Tailwind CSS v4           | Utility-first, design-token-driven, minimal CSS overhead                              |
+| Components     | Radix UI primitives       | Accessible, unstyled headless components as building blocks                           |
+| State (server) | SWR                       | Lightweight data fetching with caching, deduping, and revalidation                    |
+| State (client) | Zustand                   | Minimal, scalable global state without boilerplate                                    |
+| Charts         | Recharts                  | Declarative React charting for dashboard analytics                                    |
+| Forms          | React Hook Form + Zod     | Performant forms with schema validation                                               |
+| Icons          | Lucide React              | Consistent, lightweight SVG icon set                                                  |
+| Testing        | Vitest + Testing Library  | Fast unit tests with JSDOM and React Testing Library                                  |
+| Linting        | ESLint + Prettier         | Consistent code style and catch-at-build-time errors                                  |
 
 ### Why TanStack Start?
 
@@ -226,10 +226,10 @@ The mock backend registers itself as a `fetch` interceptor, so the entire reques
 
 ### 4. State Separation
 
-| State Type | Tool | Used For |
-|-----------|------|----------|
-| Server state | SWR | API data (dashboard stats, messages, analytics) |
-| Client state | Zustand | Auth session, UI toggles, ephemeral selections |
+| State Type   | Tool    | Used For                                        |
+| ------------ | ------- | ----------------------------------------------- |
+| Server state | SWR     | API data (dashboard stats, messages, analytics) |
+| Client state | Zustand | Auth session, UI toggles, ephemeral selections  |
 
 This separation prevents server data from being duplicated in global stores and ensures SWR's caching/deduping works correctly.
 
@@ -294,14 +294,14 @@ bun run preview
 
 ## Scripts
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| Dev | `bun run dev` | Start Vite dev server with HMR |
-| Build | `bun run build` | Production build (SSR + static) |
-| Build (dev) | `bun run build:dev` | Development mode build |
-| Preview | `bun run preview` | Preview production build locally |
-| Lint | `bun run lint` | ESLint check |
-| Format | `bun run format` | Prettier write |
+| Script      | Command             | Description                      |
+| ----------- | ------------------- | -------------------------------- |
+| Dev         | `bun run dev`       | Start Vite dev server with HMR   |
+| Build       | `bun run build`     | Production build (SSR + static)  |
+| Build (dev) | `bun run build:dev` | Development mode build           |
+| Preview     | `bun run preview`   | Preview production build locally |
+| Lint        | `bun run lint`      | ESLint check                     |
+| Format      | `bun run format`    | Prettier write                   |
 
 ---
 
@@ -339,20 +339,6 @@ This ensures:
 - Consistent theming across the app
 - Easy dark-mode extension (add a `dark` variant to `:root`)
 - Single source of truth for visual design
-
----
-
-## Future Migration Notes
-
-This project is built on **TanStack Start**, which provides SSR and server functions. If you want to migrate to **plain Vite + React Router** for a fully client-side SPA:
-
-1. Remove TanStack Start packages (`@tanstack/react-start`, `@tanstack/router-plugin`)
-2. Install `react-router-dom`
-3. Replace file-based routes in `src/routes/` with a manual route table in `src/main.tsx`
-4. Remove `src/server.ts`, `src/start.ts`, and `wrangler.jsonc`
-5. Update `vite.config.ts` to drop the TanStack Start plugin
-
-All Service, Hook, and UI module code remains unchanged — only routing infrastructure needs swapping.
 
 ---
 
