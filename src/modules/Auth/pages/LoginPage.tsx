@@ -36,6 +36,7 @@ export function LoginPage() {
           label="Email"
           type="email"
           autoComplete="email"
+          placeholder="you@example.com"
           required
           leftIcon={<Mail className="h-4 w-4" />}
           value={email}
@@ -45,6 +46,7 @@ export function LoginPage() {
           label="Password"
           type="password"
           autoComplete="current-password"
+          placeholder="Enter your password"
           required
           leftIcon={<Lock className="h-4 w-4" />}
           value={password}

@@ -34,9 +34,35 @@ export function RegisterPage() {
   return (
     <AuthShell title="Create your account" subtitle="Start building your audience today">
       <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
-        <Input label="Full name" leftIcon={<User className="h-4 w-4" />} value={name} onChange={(e) => setName(e.target.value)} required />
-        <Input label="Email" type="email" autoComplete="email" leftIcon={<Mail className="h-4 w-4" />} value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <Input label="Password" type="password" autoComplete="new-password" leftIcon={<Lock className="h-4 w-4" />} value={password} onChange={(e) => setPassword(e.target.value)} required error={error ?? undefined} />
+        <Input
+          label="Full name"
+          placeholder="Alex Morgan"
+          leftIcon={<User className="h-4 w-4" />}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <Input
+          label="Email"
+          type="email"
+          autoComplete="email"
+          placeholder="you@example.com"
+          leftIcon={<Mail className="h-4 w-4" />}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <Input
+          label="Password"
+          type="password"
+          autoComplete="new-password"
+          placeholder="Create a password"
+          leftIcon={<Lock className="h-4 w-4" />}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          error={error ?? undefined}
+        />
         <Button type="submit" isLoading={loading} fullWidth size="lg">
           Create account
         </Button>

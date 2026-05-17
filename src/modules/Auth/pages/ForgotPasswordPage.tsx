@@ -34,7 +34,15 @@ export function ForgotPasswordPage() {
         </div>
       ) : (
         <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
-          <Input label="Email" type="email" leftIcon={<Mail className="h-4 w-4" />} value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <Input
+            label="Email"
+            type="email"
+            placeholder="you@example.com"
+            leftIcon={<Mail className="h-4 w-4" />}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
           <Button type="submit" isLoading={loading} fullWidth size="lg">
             Send reset link
           </Button>
