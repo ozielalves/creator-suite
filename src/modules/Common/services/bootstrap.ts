@@ -95,6 +95,12 @@ const messages: MockMessage[] = [
   { id: "m_4", conversationId: "c_1", senderId: "u_1", text: "No rush, just wishful thinking 😄", sentAt: iso(4) },
   { id: "m_5", conversationId: "c_2", senderId: "u_2", text: "When is the next stream?", sentAt: iso(28) },
   { id: "m_6", conversationId: "c_3", senderId: "u_3", text: "Can I get the PDF version?", sentAt: iso(120) },
+  { id: "m_7", conversationId: "c_4", senderId: "u_4", text: "Hey Alex — thinking about upgrading.", sentAt: iso(370) },
+  { id: "m_8", conversationId: "c_4", senderId: "u_me", text: "Studio is a great fit if you need team seats.", sentAt: iso(365) },
+  { id: "m_9", conversationId: "c_4", senderId: "u_4", text: "Just renewed Studio plan ✨", sentAt: iso(360) },
+  { id: "m_10", conversationId: "c_5", senderId: "u_5", text: "Hi! Working on a collab pitch.", sentAt: iso(1450) },
+  { id: "m_11", conversationId: "c_5", senderId: "u_me", text: "Sounds good — send it over when ready.", sentAt: iso(1445) },
+  { id: "m_12", conversationId: "c_5", senderId: "u_5", text: "Sent over the brief", sentAt: iso(1440) },
 ];
 
 const notifications: MockNotification[] = [

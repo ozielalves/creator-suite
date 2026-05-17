@@ -21,4 +21,14 @@ describe("Button", () => {
     fireEvent.click(screen.getByRole("button"));
     expect(onClick).not.toHaveBeenCalled();
   });
+
+  it("replaces button content with a spinner while loading", () => {
+    render(
+      <Button isLoading aria-label="Send message">
+        Send
+      </Button>,
+    );
+    expect(screen.getByRole("status", { name: "Loading" })).toBeTruthy();
+    expect(screen.queryByText("Send")).toBeNull();
+  });
 });

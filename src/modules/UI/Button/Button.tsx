@@ -52,9 +52,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...rest}
       >
-        {isLoading ? <Spinner size="sm" /> : leftIcon}
-        {children}
-        {!isLoading && rightIcon}
+        {isLoading ? (
+          <Spinner size="sm" />
+        ) : (
+          <>
+            {leftIcon}
+            {children}
+            {rightIcon}
+          </>
+        )}
       </PrimitiveButton>
     );
   },

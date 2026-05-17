@@ -106,7 +106,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 function MobileNav() {
   const { pathname } = useRouterState({ select: (s) => s.location });
   return (
-    <div className="md:hidden sticky top-0 z-10 bg-background/85 backdrop-blur border-b border-border">
+    <div className="md:hidden sticky top-0 z-10 bg-sidebar/90 backdrop-blur border-b border-sidebar-border">
       <div className="flex items-center justify-between px-4 h-14">
         <div className="flex items-center gap-2">
           <div className="h-7 w-7 rounded-md bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold">
