@@ -5,7 +5,7 @@ import { Button } from "./Button";
 describe("Button", () => {
   it("renders children", () => {
     render(<Button>Click</Button>);
-    expect(screen.getByRole("button", { name: "Click" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Click" })).toBeTruthy();
   });
 
   it("fires onClick when not loading", () => {
