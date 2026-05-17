@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ImagePlus, Send, X } from "lucide-react";
+import { FileText, ImagePlus, Send, X } from "lucide-react";
 import { Button } from "@/modules/UI";
 import { cn } from "@/lib/utils";
 import { ACCEPTED_MEDIA_ACCEPT, MAX_ATTACHMENTS_PER_MESSAGE } from "../constants";
@@ -25,10 +25,7 @@ export function MessageComposer({ onSend, disabled }: MessageComposerProps) {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const canSend =
-    !disabled &&
-    !sending &&
-    (text.trim().length > 0 || pending.length > 0);
+  const canSend = !disabled && !sending && (text.trim().length > 0 || pending.length > 0);
 
   function addFiles(files: FileList | File[]) {
     const list = Array.from(files);
@@ -45,11 +42,14 @@ export function MessageComposer({ onSend, disabled }: MessageComposerProps) {
     const skipped = list.length - toAdd.length;
 
     try {
-      const next = toAdd.map((file) => ({
-        file,
-        previewUrl: URL.createObjectURL(file),
-        type: MediaService.getMediaType(file),
-      }));
+      const next = toAdd.map((file) => {
+        const type = MediaService.getMediaType(file);
+        return {
+          file,
+          previewUrl: type === "document" ? "" : URL.createObjectURL(file),
+          type,
+        };
+      });
       setPending((prev) => [...prev, ...next]);
       if (skipped > 0) {
         setError(`Only ${MAX_ATTACHMENTS_PER_MESSAGE} attachments are allowed per message.`);
@@ -62,7 +62,7 @@ export function MessageComposer({ onSend, disabled }: MessageComposerProps) {
   function removePending(index: number) {
     setPending((prev) => {
       const item = prev[index];
-      if (item) URL.revokeObjectURL(item.previewUrl);
+      if (item?.previewUrl) URL.revokeObjectURL(item.previewUrl);
       return prev.filter((_, i) => i !== index);
     });
     setError(null);
@@ -83,7 +83,9 @@ export function MessageComposer({ onSend, disabled }: MessageComposerProps) {
         text: text.trim() || undefined,
         attachments,
       });
-      pending.forEach((p) => URL.revokeObjectURL(p.previewUrl));
+      pending.forEach((p) => {
+        if (p.previewUrl) URL.revokeObjectURL(p.previewUrl);
+      });
       setText("");
       setPending([]);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -99,16 +101,18 @@ export function MessageComposer({ onSend, disabled }: MessageComposerProps) {
       {pending.length > 0 && (
         <div className="flex gap-2 overflow-x-auto px-3 pt-3">
           {pending.map((item, index) => (
-            <div
-              key={`${item.file.name}-${index}`}
-              className="relative shrink-0"
-            >
+            <div key={`${item.file.name}-${index}`} className="relative shrink-0">
               {item.type === "video" ? (
                 <video
                   src={item.previewUrl}
                   className="h-16 w-16 rounded-lg border border-border object-cover bg-black"
                   muted
                 />
+              ) : item.type === "document" ? (
+                <div className="flex h-16 w-28 items-center gap-2 rounded-lg border border-border bg-muted/50 px-2">
+                  <FileText className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                  <span className="truncate text-[10px] font-medium">{item.file.name}</span>
+                </div>
               ) : (
                 <img
                   src={item.previewUrl}
@@ -151,7 +155,7 @@ export function MessageComposer({ onSend, disabled }: MessageComposerProps) {
           size="icon"
           disabled={disabled || sending || pending.length >= MAX_ATTACHMENTS_PER_MESSAGE}
           onClick={() => fileInputRef.current?.click()}
-          aria-label="Attach image, GIF, or video"
+          aria-label="Attach image, GIF, video, or document"
         >
           <ImagePlus className="h-4 w-4" />
         </Button>

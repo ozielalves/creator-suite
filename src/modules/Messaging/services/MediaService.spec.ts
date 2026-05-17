@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { MAX_IMAGE_BYTES, MAX_VIDEO_BYTES } from "../constants";
+import { MAX_DOCUMENT_BYTES, MAX_IMAGE_BYTES, MAX_VIDEO_BYTES } from "../constants";
 import { MediaService, MediaValidationError } from "./MediaService";
 
 function makeFile(name: string, type: string, size = 1024): File {
@@ -16,43 +16,46 @@ describe("MediaService", () => {
   });
 
   describe("getMediaType", () => {
-    it("detects image, gif, and video types", () => {
-      expect(MediaService.getMediaType(makeFile("a.jpg", "image/jpeg"))).toBe(
-        "image",
-      );
+    it("detects image, gif, video, and document types", () => {
+      expect(MediaService.getMediaType(makeFile("a.jpg", "image/jpeg"))).toBe("image");
       expect(MediaService.getMediaType(makeFile("b.gif", "image/gif"))).toBe("gif");
-      expect(MediaService.getMediaType(makeFile("c.mp4", "video/mp4"))).toBe(
-        "video",
-      );
+      expect(MediaService.getMediaType(makeFile("c.mp4", "video/mp4"))).toBe("video");
+      expect(MediaService.getMediaType(makeFile("brief.pdf", "application/pdf"))).toBe("document");
+      expect(MediaService.getMediaType(makeFile("notes.txt", ""))).toBe("document");
     });
 
     it("rejects unsupported types", () => {
-      expect(() =>
-        MediaService.getMediaType(makeFile("doc.pdf", "application/pdf")),
-      ).toThrow(MediaValidationError);
+      expect(() => MediaService.getMediaType(makeFile("archive.zip", "application/zip"))).toThrow(
+        MediaValidationError,
+      );
     });
   });
 
   describe("validateMediaFile", () => {
     it("rejects images over the image size limit", () => {
       expect(() =>
-        MediaService.validateMediaFile(
-          makeFile("big.jpg", "image/jpeg", MAX_IMAGE_BYTES + 1),
-        ),
+        MediaService.validateMediaFile(makeFile("big.jpg", "image/jpeg", MAX_IMAGE_BYTES + 1)),
       ).toThrow(/exceeds the 10MB limit for images/);
     });
 
     it("rejects videos over the video size limit", () => {
       expect(() =>
-        MediaService.validateMediaFile(
-          makeFile("big.mp4", "video/mp4", MAX_VIDEO_BYTES + 1),
-        ),
+        MediaService.validateMediaFile(makeFile("big.mp4", "video/mp4", MAX_VIDEO_BYTES + 1)),
       ).toThrow(/exceeds the 25MB limit for videos/);
     });
 
-    it("allows files within size limits", () => {
+    it("rejects documents over the document size limit", () => {
       expect(() =>
-        MediaService.validateMediaFile(makeFile("ok.jpg", "image/jpeg")),
+        MediaService.validateMediaFile(
+          makeFile("big.pdf", "application/pdf", MAX_DOCUMENT_BYTES + 1),
+        ),
+      ).toThrow(/exceeds the 15MB limit for documents/);
+    });
+
+    it("allows files within size limits", () => {
+      expect(() => MediaService.validateMediaFile(makeFile("ok.jpg", "image/jpeg"))).not.toThrow();
+      expect(() =>
+        MediaService.validateMediaFile(makeFile("ok.pdf", "application/pdf")),
       ).not.toThrow();
     });
   });
@@ -111,10 +114,7 @@ describe("MediaService", () => {
 
   describe("filesToAttachments", () => {
     it("converts multiple files in parallel", async () => {
-      const files = [
-        makeFile("a.jpg", "image/jpeg"),
-        makeFile("b.gif", "image/gif"),
-      ];
+      const files = [makeFile("a.jpg", "image/jpeg"), makeFile("b.gif", "image/gif")];
       const attachments = await MediaService.filesToAttachments(files);
 
       expect(attachments).toHaveLength(2);
@@ -125,25 +125,16 @@ describe("MediaService", () => {
 
   describe("formatAttachmentPreview", () => {
     it("formats single and multiple attachment labels", () => {
-      expect(MediaService.formatAttachmentPreview([{ type: "image" }])).toBe(
-        "Photo",
-      );
+      expect(MediaService.formatAttachmentPreview([{ type: "image" }])).toBe("Photo");
       expect(MediaService.formatAttachmentPreview([{ type: "gif" }])).toBe("GIF");
-      expect(MediaService.formatAttachmentPreview([{ type: "video" }])).toBe(
-        "Video",
+      expect(MediaService.formatAttachmentPreview([{ type: "video" }])).toBe("Video");
+      expect(MediaService.formatAttachmentPreview([{ type: "document" }])).toBe("Document");
+      expect(MediaService.formatAttachmentPreview([{ type: "image" }, { type: "image" }])).toBe(
+        "2 photos",
       );
-      expect(
-        MediaService.formatAttachmentPreview([
-          { type: "image" },
-          { type: "image" },
-        ]),
-      ).toBe("2 photos");
-      expect(
-        MediaService.formatAttachmentPreview([
-          { type: "image" },
-          { type: "video" },
-        ]),
-      ).toBe("2 attachments");
+      expect(MediaService.formatAttachmentPreview([{ type: "image" }, { type: "video" }])).toBe(
+        "2 attachments",
+      );
     });
 
     it("returns empty string when there are no attachments", () => {

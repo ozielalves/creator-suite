@@ -1,4 +1,4 @@
-export type MessageMediaType = "image" | "gif" | "video";
+export type MessageMediaType = "image" | "gif" | "video" | "document";
 
 export type MessageAttachment = {
   id: string;
