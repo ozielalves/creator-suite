@@ -22,12 +22,20 @@ export type MockConversation = {
   lastMessageAt: string;
   unread: number;
 };
+export type MockMessageAttachment = {
+  id: string;
+  type: "image" | "gif" | "video";
+  url: string;
+  name: string;
+  mimeType: string;
+};
 export type MockMessage = {
   id: string;
   conversationId: string;
   senderId: string;
   text: string;
   sentAt: string;
+  attachments?: MockMessageAttachment[];
 };
 export type MockNotification = {
   id: string;
@@ -67,6 +75,22 @@ const conversations: MockConversation[] = [
 const messages: MockMessage[] = [
   { id: "m_1", conversationId: "c_1", senderId: "u_1", text: "Hey! Loved the latest drop 🔥", sentAt: iso(8) },
   { id: "m_2", conversationId: "c_1", senderId: "u_me", text: "Thanks Maya — more coming next week.", sentAt: iso(7) },
+  {
+    id: "m_2b",
+    conversationId: "c_1",
+    senderId: "u_me",
+    text: "",
+    sentAt: iso(6),
+    attachments: [
+      {
+        id: "a_seed_1",
+        type: "image",
+        url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=300&fit=crop",
+        name: "preview.jpg",
+        mimeType: "image/jpeg",
+      },
+    ],
+  },
   { id: "m_3", conversationId: "c_1", senderId: "u_1", text: "Will you ship the source files?", sentAt: iso(5) },
   { id: "m_4", conversationId: "c_1", senderId: "u_1", text: "No rush, just wishful thinking 😄", sentAt: iso(4) },
   { id: "m_5", conversationId: "c_2", senderId: "u_2", text: "When is the next stream?", sentAt: iso(28) },
@@ -86,6 +110,29 @@ const invoices: MockInvoice[] = [
   { id: "inv_003", amountCents: 2900, status: "paid", issuedAt: iso(60 * 24 * 66) },
   { id: "inv_004", amountCents: 2900, status: "due", issuedAt: iso(60 * 24 * 0) },
 ];
+
+function formatMockLastMessage(
+  text: string,
+  attachments: MockMessageAttachment[],
+): string {
+  if (text && attachments.length > 0) {
+    const label =
+      attachments.length === 1
+        ? attachments[0]!.type === "video"
+          ? "Video"
+          : attachments[0]!.type === "gif"
+            ? "GIF"
+            : "Photo"
+        : `${attachments.length} attachments`;
+    return `${text} · ${label}`;
+  }
+  if (text) return text;
+  if (attachments.length === 1) {
+    const t = attachments[0]!.type;
+    return t === "video" ? "Video" : t === "gif" ? "GIF" : "Photo";
+  }
+  return `${attachments.length} attachments`;
+}
 
 // ---- Handlers ----
 function registerAll() {
@@ -146,19 +193,31 @@ function registerAll() {
     /^\/messaging\/conversations\/[^/]+\/messages$/,
     ({ url, body }) => {
       const id = url.pathname.split("/")[3];
-      const { text } = (body ?? {}) as { text?: string };
-      if (!text?.trim()) throw new MockError(400, "Empty message");
+      const payload = (body ?? {}) as {
+        text?: string;
+        attachments?: Array<Omit<MockMessageAttachment, "id">>;
+      };
+      const text = payload.text?.trim() ?? "";
+      const rawAttachments = payload.attachments ?? [];
+      if (!text && rawAttachments.length === 0) {
+        throw new MockError(400, "Empty message");
+      }
+      const attachments = rawAttachments.map((a, i) => ({
+        ...a,
+        id: `a_${Date.now()}_${i}`,
+      }));
       const msg: MockMessage = {
         id: `m_${Date.now()}`,
         conversationId: id,
         senderId: "u_me",
         text,
         sentAt: new Date().toISOString(),
+        ...(attachments.length > 0 ? { attachments } : {}),
       };
       messages.push(msg);
       const conv = conversations.find((c) => c.id === id);
       if (conv) {
-        conv.lastMessage = text;
+        conv.lastMessage = formatMockLastMessage(text, attachments);
         conv.lastMessageAt = msg.sentAt;
       }
       return msg;

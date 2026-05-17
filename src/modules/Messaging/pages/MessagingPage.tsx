@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { ArrowLeft, MessageSquare, Send } from "lucide-react";
+import { ArrowLeft, MessageSquare } from "lucide-react";
 import { useSWRConfig } from "swr";
 import { Avatar, Button, Card, EmptyState, Skeleton } from "@/modules/UI";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { formatRelativeTime } from "@/modules/Common/utils/format";
+import { MessageBubble } from "../components/MessageBubble";
+import { MessageComposer } from "../components/MessageComposer";
 import { useConversations, useMessages } from "../hooks/useMessaging";
 import { MessagingService } from "../services/MessagingService";
+import type { SendMessagePayload } from "../types";
 
 export function MessagingPage() {
   const isMobile = useIsMobile();
@@ -131,8 +134,6 @@ function MessageThread({
 }) {
   const { data: messages, isLoading } = useMessages(conversationId);
   const { mutate } = useSWRConfig();
-  const [text, setText] = useState("");
-  const [sending, setSending] = useState(false);
 
   if (!conversationId) {
     return (
@@ -146,19 +147,10 @@ function MessageThread({
     );
   }
 
-  async function send(e: React.FormEvent) {
-    e.preventDefault();
-    const value = text.trim();
-    if (!value) return;
-    setSending(true);
-    try {
-      await MessagingService.send(conversationId!, value);
-      setText("");
-      await mutate(`/messaging/conversations/${conversationId}/messages`);
-      await mutate("/messaging/conversations");
-    } finally {
-      setSending(false);
-    }
+  async function send(payload: SendMessagePayload) {
+    await MessagingService.send(conversationId!, payload);
+    await mutate(`/messaging/conversations/${conversationId}/messages`);
+    await mutate("/messaging/conversations");
   }
 
   return (
@@ -179,57 +171,13 @@ function MessageThread({
           {participantName ?? "Conversation"}
         </h2>
       </div>
-      {/* Virtualization note: for production we'd swap this for react-window;
-          the list contract is simple enough that the swap is local. */}
       <div className="flex-1 overflow-y-auto p-5 space-y-3" role="log" aria-live="polite">
         {isLoading && <Skeleton className="h-12 w-2/3" />}
-        {messages?.map((m) => {
-          const mine = m.senderId === "u_me";
-          return (
-            <div
-              key={m.id}
-              className={cn("flex", mine ? "justify-end" : "justify-start")}
-            >
-              <div
-                className={cn(
-                  "max-w-[75%] rounded-2xl px-3.5 py-2 text-sm",
-                  mine
-                    ? "bg-primary text-primary-foreground rounded-br-md"
-                    : "bg-muted text-foreground rounded-bl-md",
-                )}
-              >
-                {m.text}
-                <div
-                  className={cn(
-                    "text-[10px] mt-1 opacity-70",
-                    mine ? "text-primary-foreground" : "text-muted-foreground",
-                  )}
-                >
-                  {formatRelativeTime(m.sentAt)}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+        {messages?.map((m) => (
+          <MessageBubble key={m.id} message={m} mine={m.senderId === "u_me"} />
+        ))}
       </div>
-      <form
-        onSubmit={send}
-        className="border-t border-border p-3 flex items-center gap-2"
-      >
-        <label htmlFor="msg-input" className="sr-only">
-          Message
-        </label>
-        <input
-          id="msg-input"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Type a message…"
-          className="flex-1 h-10 rounded-lg border border-input bg-surface px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        />
-        <Button type="submit" size="icon" isLoading={sending} aria-label="Send message">
-          <Send className="h-4 w-4" />
-        </Button>
-      </form>
+      <MessageComposer onSend={send} />
     </section>
   );
 }

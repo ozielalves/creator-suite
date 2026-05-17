@@ -44,7 +44,7 @@ describe("MessagingService", () => {
     expect(httpMock.get).toHaveBeenCalledWith("/messaging/conversations/c_1/messages");
   });
 
-  it("sends a message", async () => {
+  it("sends a text message", async () => {
     const message = {
       id: "m_2",
       conversationId: "c_1",
@@ -54,10 +54,38 @@ describe("MessagingService", () => {
     };
     httpMock.post.mockResolvedValue(message);
 
-    await expect(MessagingService.send("c_1", "Reply")).resolves.toEqual(message);
+    await expect(MessagingService.send("c_1", { text: "Reply" })).resolves.toEqual(message);
     expect(httpMock.post).toHaveBeenCalledWith(
       "/messaging/conversations/c_1/messages",
       { text: "Reply" },
+    );
+  });
+
+  it("sends a message with media attachments", async () => {
+    const attachments = [
+      {
+        type: "image" as const,
+        url: "data:image/png;base64,abc",
+        name: "shot.png",
+        mimeType: "image/png",
+      },
+    ];
+    const message = {
+      id: "m_3",
+      conversationId: "c_1",
+      senderId: "u_me",
+      text: "",
+      sentAt: "now",
+      attachments: [{ id: "a_1", ...attachments[0] }],
+    };
+    httpMock.post.mockResolvedValue(message);
+
+    await expect(
+      MessagingService.send("c_1", { attachments }),
+    ).resolves.toEqual(message);
+    expect(httpMock.post).toHaveBeenCalledWith(
+      "/messaging/conversations/c_1/messages",
+      { attachments },
     );
   });
 });

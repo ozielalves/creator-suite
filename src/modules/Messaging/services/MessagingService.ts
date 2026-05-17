@@ -1,20 +1,11 @@
 import { HttpClient } from "@/modules/Common/services/HttpClient";
+import type {
+  Conversation,
+  Message,
+  SendMessagePayload,
+} from "../types";
 
-export type Conversation = {
-  id: string;
-  participantId: string;
-  participantName: string;
-  lastMessage: string;
-  lastMessageAt: string;
-  unread: number;
-};
-export type Message = {
-  id: string;
-  conversationId: string;
-  senderId: string;
-  text: string;
-  sentAt: string;
-};
+export type { Conversation, Message, MessageAttachment, SendMessagePayload } from "../types";
 
 class MessagingServiceImpl {
   list() {
@@ -25,10 +16,10 @@ class MessagingServiceImpl {
       `/messaging/conversations/${conversationId}/messages`,
     );
   }
-  send(conversationId: string, text: string) {
+  send(conversationId: string, payload: SendMessagePayload) {
     return HttpClient.post<Message>(
       `/messaging/conversations/${conversationId}/messages`,
-      { text },
+      payload,
     );
   }
 }

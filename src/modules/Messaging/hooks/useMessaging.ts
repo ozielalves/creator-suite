@@ -1,9 +1,6 @@
 import useSWR from "swr";
-import {
-  MessagingService,
-  type Conversation,
-  type Message,
-} from "../services/MessagingService";
+import { MessagingService } from "../services/MessagingService";
+import type { Conversation, Message } from "../types";
 
 export const useConversations = () =>
   useSWR<Conversation[]>("/messaging/conversations", () => MessagingService.list());
