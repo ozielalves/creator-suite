@@ -1,9 +1,9 @@
 import { HttpClient } from "@/modules/Common/services/HttpClient";
 
-export interface AnalyticsOverview {
+export type AnalyticsOverview = {
   series: { day: string; views: number; signups: number }[];
   topSources: { source: string; visits: number }[];
-}
+};
 
 class AnalyticsServiceImpl {
   overview() {

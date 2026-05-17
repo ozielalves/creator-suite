@@ -9,8 +9,8 @@ import { REGISTER_ROUTE, FORGOT_PASSWORD_ROUTE } from "../constants";
 export function LoginPage() {
   const navigate = useNavigate();
   const setUser = useAuthStore((s) => s.setUser);
-  const [email, setEmail] = useState("alex@creator.studio");
-  const [password, setPassword] = useState("demo-password");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

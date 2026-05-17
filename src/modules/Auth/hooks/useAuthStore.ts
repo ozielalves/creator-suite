@@ -9,13 +9,13 @@ import { AuthService } from "../services/AuthService";
  *  - tiny mental model → faster team onboarding
  *  - scales naturally via slices when domains grow
  */
-interface AuthState {
+type AuthState = {
   user: AuthUser | null;
   status: "idle" | "loading" | "authenticated" | "unauthenticated";
   setUser: (user: AuthUser | null) => void;
   hydrate: () => Promise<void>;
   logout: () => void;
-}
+};
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,

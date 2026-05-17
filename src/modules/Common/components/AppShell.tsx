@@ -13,11 +13,11 @@ import { Avatar } from "@/modules/UI";
 import { cn } from "@/lib/utils";
 import { APP_NAME } from "@/config/env";
 
-interface NavItem {
+type NavItem = {
   to: "/dashboard" | "/messaging" | "/analytics" | "/notifications" | "/subscription";
   label: string;
   icon: typeof LayoutDashboard;
-}
+};
 
 const NAV: NavItem[] = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },

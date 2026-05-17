@@ -1,13 +1,13 @@
 import { HttpClient } from "@/modules/Common/services/HttpClient";
 
-export interface AppNotification {
+export type AppNotification = {
   id: string;
   title: string;
   description: string;
   read: boolean;
   createdAt: string;
   type: "system" | "message" | "billing" | "follower";
-}
+};
 
 class NotificationsServiceImpl {
   list() {

@@ -1,22 +1,22 @@
 import { HttpClient } from "@/modules/Common/services/HttpClient";
 
-export interface Plan {
+export type Plan = {
   id: "free" | "pro" | "studio";
   name: string;
   priceCents: number;
   features: string[];
-}
-export interface CurrentSubscription {
+};
+export type CurrentSubscription = {
   planId: Plan["id"];
   renewsAt: string;
   status: "active" | "past_due" | "canceled";
-}
-export interface Invoice {
+};
+export type Invoice = {
   id: string;
   amountCents: number;
   status: "paid" | "due" | "failed";
   issuedAt: string;
-}
+};
 
 class SubscriptionServiceImpl {
   plans() {

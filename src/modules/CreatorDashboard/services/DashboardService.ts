@@ -1,6 +1,6 @@
 import { HttpClient } from "@/modules/Common/services/HttpClient";
 
-export interface DashboardStats {
+export type DashboardStats = {
   revenueCents: number;
   revenueDelta: number;
   subscribers: number;
@@ -9,17 +9,17 @@ export interface DashboardStats {
   postsDelta: number;
   engagement: number;
   engagementDelta: number;
-}
-export interface RevenuePoint {
+};
+export type RevenuePoint = {
   month: string;
   revenue: number;
-}
-export interface ActivityItem {
+};
+export type ActivityItem = {
   id: string;
   actor: string;
   action: string;
   at: string;
-}
+};
 
 class DashboardServiceImpl {
   getStats() {

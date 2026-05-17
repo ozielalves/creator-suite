@@ -2,19 +2,19 @@
  * HttpClient — thin typed wrapper around native fetch.
  * Supports interceptors, retries, auth headers, centralized errors.
  *
- * In production this hits a real API. For this demo we register an
- * in-memory request handler (see MockBackend) which intercepts fetch.
+ * In production this hits a real API. Locally, an in-memory request
+ * handler (see MockBackend) intercepts fetch.
  */
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
-export interface HttpRequestConfig {
+export type HttpRequestConfig = {
   method?: HttpMethod;
   body?: unknown;
   headers?: Record<string, string>;
   retries?: number;
   signal?: AbortSignal;
-}
+};
 
 export type RequestInterceptor = (
   url: string,

@@ -1,20 +1,20 @@
 import { HttpClient } from "@/modules/Common/services/HttpClient";
 
-export interface Conversation {
+export type Conversation = {
   id: string;
   participantId: string;
   participantName: string;
   lastMessage: string;
   lastMessageAt: string;
   unread: number;
-}
-export interface Message {
+};
+export type Message = {
   id: string;
   conversationId: string;
   senderId: string;
   text: string;
   sentAt: string;
-}
+};
 
 class MessagingServiceImpl {
   list() {

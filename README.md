@@ -83,7 +83,6 @@ Auth state is simple (user + token + login/logout). Zustand provides exactly wha
 
 ```text
 src/
-├── components/ui/          # shadcn/ui base primitives (auto-generated)
 ├── config/
 │   └── env.ts              # App-wide constants (API_BASE, APP_NAME, latency)
 ├── hooks/
@@ -115,7 +114,8 @@ Every feature lives in `src/modules/<Domain>/` and exports a public API via `ind
 ```text
 modules/
 ├── UI/                     # Design system — presentational components only
-│   ├── Avatar/
+│   ├── primitives/         # shadcn/ui (CLI: `npx shadcn add <name>`)
+│   ├── Avatar/             # App-facing wrappers with product API + tests
 │   ├── Badge/
 │   ├── Button/
 │   ├── Card/
@@ -136,7 +136,7 @@ modules/
 │   │   └── bootstrap.ts    # Seed data + route handlers for all features
 │   └── utils/
 │       ├── format.ts       # Currency, date, number formatting
-│       └── format.test.ts  # Colocated unit tests
+│       └── format.spec.ts  # Colocated unit tests
 ├── Auth/
 │   ├── components/
 │   │   └── AuthGate.tsx    # Route guard — redirects unauthenticated users
@@ -233,14 +233,12 @@ This separation prevents server data from being duplicated in global stores and 
 
 ### 5. UI / Design System
 
-The `modules/UI` package contains **atomic, presentational** components:
+`modules/UI` is the single UI home:
 
-- No business logic
-- Variants via `class-variance-authority` (CVA)
-- Accessible by default (ARIA attributes, keyboard support)
-- Loading states (skeletons, spinners) and empty states included
+- **`primitives/`** — shadcn/ui building blocks (`npx shadcn add dialog`, etc.). Import via `@/modules/UI/primitives/<name>` when you need a primitive directly.
+- **Top-level folders** (`Button/`, `Card/`, …) — app-facing components that wrap primitives with product APIs (`isLoading`, `label`/`error` on inputs, `tone` on badges). Feature code imports from `@/modules/UI` only.
 
-Components like `Button` include colocated tests and Storybook-style stories to demonstrate testing and documentation conventions.
+Wrappers stay thin; primitives stay CLI-updatable. Colocated tests live on the app-facing components.
 
 ### 6. Route Guards
 
@@ -276,7 +274,7 @@ bun install
 bun run dev
 ```
 
-Open `http://localhost:3000`. The login page will appear with pre-filled demo credentials.
+Open `http://localhost:3000`. Sign in with any email and password (mock backend accepts all credentials).
 
 ### Build for production
 
@@ -307,24 +305,26 @@ bun run preview
 
 ## Testing
 
-Tests are colocated with the code they verify (e.g., `format.test.ts` lives next to `format.ts`).
+Tests are colocated with the code they verify (e.g., `format.spec.ts` lives next to `format.ts`). Vitest suites use the `*.spec.ts(x)` suffix so Bun's native test runner does not pick them up.
 
-Run tests:
+Run tests (recommended):
 
 ```bash
-bunx vitest run
+bun run test
 ```
 
 Watch mode:
 
 ```bash
-bunx vitest
+bun run test:watch
 ```
+
+`bun test` also works: it runs a bridge in `src/test/` that delegates to Vitest (`bunfig.toml` limits Bun's scanner to that folder). Prefer `bun run test` for direct execution without the extra process.
 
 Example test locations:
 
-- `src/modules/Common/utils/format.test.ts` — Date, currency, and number formatting
-- `src/modules/UI/Button/Button.test.tsx` — Component rendering and interaction
+- `src/modules/Common/utils/format.spec.ts` — Date, currency, and number formatting
+- `src/modules/UI/Button/Button.spec.tsx` — Component rendering and interaction
 
 ---
 

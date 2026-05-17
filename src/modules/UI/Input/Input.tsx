@@ -1,13 +1,14 @@
 import { forwardRef, useId } from "react";
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { Input as PrimitiveInput } from "../primitives/input";
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   hint?: string;
   error?: string;
   leftIcon?: ReactNode;
-}
+};
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, label, hint, error, leftIcon, id, ...rest }, ref) => {
@@ -24,20 +25,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative">
           {leftIcon && (
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
+            <span className="absolute left-3 top-1/2 z-10 -translate-y-1/2 text-muted-foreground pointer-events-none">
               {leftIcon}
             </span>
           )}
-          <input
+          <PrimitiveInput
             ref={ref}
             id={inputId}
             aria-invalid={!!error || undefined}
             aria-describedby={describedBy}
             className={cn(
-              "w-full h-10 rounded-lg border border-input bg-surface px-3 text-sm",
-              "placeholder:text-muted-foreground",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-ring",
-              "disabled:opacity-50 disabled:cursor-not-allowed",
+              "h-10 rounded-lg border-input bg-surface shadow-none",
+              "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0",
               leftIcon && "pl-9",
               error && "border-destructive focus-visible:ring-destructive",
               className,

@@ -7,42 +7,42 @@ import { installMockBackend, registerHandler, MockError } from "./MockBackend";
 import { API_BASE } from "../../../config/env";
 
 // ---- Types ----
-export interface MockUser {
+export type MockUser = {
   id: string;
   email: string;
   name: string;
   avatarUrl: string | null;
   plan: "free" | "pro" | "studio";
-}
-export interface MockConversation {
+};
+export type MockConversation = {
   id: string;
   participantId: string;
   participantName: string;
   lastMessage: string;
   lastMessageAt: string;
   unread: number;
-}
-export interface MockMessage {
+};
+export type MockMessage = {
   id: string;
   conversationId: string;
   senderId: string;
   text: string;
   sentAt: string;
-}
-export interface MockNotification {
+};
+export type MockNotification = {
   id: string;
   title: string;
   description: string;
   read: boolean;
   createdAt: string;
   type: "system" | "message" | "billing" | "follower";
-}
-export interface MockInvoice {
+};
+export type MockInvoice = {
   id: string;
   amountCents: number;
   status: "paid" | "due" | "failed";
   issuedAt: string;
-}
+};
 
 // ---- Seed ----
 const now = Date.now();

@@ -1,21 +1,21 @@
-export interface AuthUser {
+export type AuthUser = {
   id: string;
   email: string;
   name: string;
   avatarUrl: string | null;
   plan: "free" | "pro" | "studio";
-}
+};
 
-export interface LoginCredentials {
+export type LoginCredentials = {
   email: string;
   password: string;
-}
+};
 
-export interface RegisterCredentials extends LoginCredentials {
+export type RegisterCredentials = LoginCredentials & {
   name: string;
-}
+};
 
-export interface AuthResponse {
+export type AuthResponse = {
   token: string;
   user: AuthUser;
-}
+};

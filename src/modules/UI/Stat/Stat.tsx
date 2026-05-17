@@ -3,13 +3,13 @@ import { Card } from "../Card/Card";
 import { Skeleton } from "../Skeleton/Skeleton";
 import { cn } from "@/lib/utils";
 
-export interface StatProps {
+export type StatProps = {
   label: string;
   value: string | number;
   delta?: number;
   icon?: ReactNode;
   isLoading?: boolean;
-}
+};
 
 export function Stat({ label, value, delta, icon, isLoading }: StatProps) {
   return (

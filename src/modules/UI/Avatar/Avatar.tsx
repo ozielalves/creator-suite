@@ -1,11 +1,12 @@
 import { cn } from "@/lib/utils";
+import { AvatarFallback, Avatar as PrimitiveAvatar } from "../primitives/avatar";
 
-export interface AvatarProps {
+export type AvatarProps = {
   name: string;
   src?: string | null;
   size?: "sm" | "md" | "lg";
   className?: string;
-}
+};
 
 const SIZE = {
   sm: "h-7 w-7 text-[10px]",
@@ -22,20 +23,20 @@ export function Avatar({ name, src, size = "md", className }: AvatarProps) {
     .join("");
 
   return (
-    <div
+    <PrimitiveAvatar
       role="img"
       aria-label={name}
       className={cn(
-        "relative inline-flex items-center justify-center rounded-full overflow-hidden bg-accent text-accent-foreground font-medium shrink-0",
+        "bg-accent text-accent-foreground font-medium",
         SIZE[size],
         className,
       )}
     >
       {src ? (
-        <img src={src} alt="" className="h-full w-full object-cover" />
+        <img src={src} alt="" className="aspect-square h-full w-full object-cover" />
       ) : (
-        <span>{initials}</span>
+        <AvatarFallback className="bg-accent text-accent-foreground">{initials}</AvatarFallback>
       )}
-    </div>
+    </PrimitiveAvatar>
   );
 }
