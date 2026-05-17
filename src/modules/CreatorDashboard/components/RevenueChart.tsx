@@ -53,7 +53,7 @@ export function RevenueChart() {
                   fontSize: 12,
                 }}
                 labelStyle={{ color: "var(--muted-foreground)" }}
-                formatter={(value: number) => [`$${value.toLocaleString()}`, "Revenue"]}
+                formatter={(value) => [`$${Number(value).toLocaleString()}`, "Revenue"]}
               />
               <Area
                 type="monotone"
