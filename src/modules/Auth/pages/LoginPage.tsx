@@ -80,7 +80,7 @@ export function AuthShell({
   children: React.ReactNode;
 }) {
   return (
-    <main className="min-h-screen flex items-center justify-center bg-background px-4 py-12">
+    <main className="min-h-screen flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground font-semibold mb-4">

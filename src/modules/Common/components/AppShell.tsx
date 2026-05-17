@@ -34,7 +34,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { pathname } = useRouterState({ select: (s) => s.location });
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="min-h-screen flex">
       <aside
         aria-label="Primary"
         className="hidden md:flex w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground"

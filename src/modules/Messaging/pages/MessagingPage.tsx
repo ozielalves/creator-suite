@@ -1,28 +1,55 @@
 import { useState } from "react";
-import { Send } from "lucide-react";
+import { ArrowLeft, MessageSquare, Send } from "lucide-react";
 import { useSWRConfig } from "swr";
 import { Avatar, Button, Card, EmptyState, Skeleton } from "@/modules/UI";
-import { MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { formatRelativeTime } from "@/modules/Common/utils/format";
 import { useConversations, useMessages } from "../hooks/useMessaging";
 import { MessagingService } from "../services/MessagingService";
 
 export function MessagingPage() {
+  const isMobile = useIsMobile();
   const { data: conversations, isLoading } = useConversations();
   const [activeId, setActiveId] = useState<string | null>(null);
-  const selected = activeId ?? conversations?.[0]?.id ?? null;
+  const [mobileView, setMobileView] = useState<"list" | "thread">("list");
+
+  const selected = isMobile
+    ? activeId
+    : (activeId ?? conversations?.[0]?.id ?? null);
+
+  const activeConversation = conversations?.find((c) => c.id === selected);
+
+  function handleSelect(id: string) {
+    setActiveId(id);
+    if (isMobile) setMobileView("thread");
+  }
+
+  function handleBack() {
+    setMobileView("list");
+  }
+
+  const showList = !isMobile || mobileView === "list";
+  const showThread = !isMobile || mobileView === "thread";
 
   return (
     <div className="h-[calc(100vh-7rem)] md:h-[calc(100vh-6rem)]">
       <Card className="h-full grid grid-cols-1 md:grid-cols-[320px_1fr] overflow-hidden p-0">
-        <ConversationList
-          items={conversations}
-          isLoading={isLoading}
-          selectedId={selected}
-          onSelect={setActiveId}
-        />
-        <MessageThread conversationId={selected} />
+        {showList && (
+          <ConversationList
+            items={conversations}
+            isLoading={isLoading}
+            selectedId={selected}
+            onSelect={handleSelect}
+          />
+        )}
+        {showThread && (
+          <MessageThread
+            conversationId={selected}
+            participantName={activeConversation?.participantName}
+            onBack={isMobile ? handleBack : undefined}
+          />
+        )}
       </Card>
     </div>
   );
@@ -40,7 +67,7 @@ function ConversationList({
   onSelect: (id: string) => void;
 }) {
   return (
-    <aside className="border-r border-border overflow-y-auto bg-sidebar/40">
+    <aside className="h-full border-r border-border overflow-y-auto bg-sidebar/40 md:border-r">
       <div className="px-4 h-14 flex items-center border-b border-border">
         <h2 className="text-sm font-semibold">Messages</h2>
       </div>
@@ -93,7 +120,15 @@ function ConversationList({
   );
 }
 
-function MessageThread({ conversationId }: { conversationId: string | null }) {
+function MessageThread({
+  conversationId,
+  participantName,
+  onBack,
+}: {
+  conversationId: string | null;
+  participantName?: string;
+  onBack?: () => void;
+}) {
   const { data: messages, isLoading } = useMessages(conversationId);
   const { mutate } = useSWRConfig();
   const [text, setText] = useState("");
@@ -101,7 +136,7 @@ function MessageThread({ conversationId }: { conversationId: string | null }) {
 
   if (!conversationId) {
     return (
-      <div className="flex items-center justify-center">
+      <div className="hidden md:flex h-full items-center justify-center">
         <EmptyState
           icon={<MessageSquare className="h-5 w-5" />}
           title="Select a conversation"
@@ -127,9 +162,22 @@ function MessageThread({ conversationId }: { conversationId: string | null }) {
   }
 
   return (
-    <section className="flex flex-col min-h-0">
-      <div className="h-14 px-5 flex items-center border-b border-border">
-        <h2 className="text-sm font-semibold">Conversation</h2>
+    <section className="flex h-full flex-col min-h-0">
+      <div className="h-14 px-3 md:px-5 flex items-center gap-2 border-b border-border shrink-0">
+        {onBack && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={onBack}
+            aria-label="Back to messages"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        )}
+        <h2 className="text-sm font-semibold truncate">
+          {participantName ?? "Conversation"}
+        </h2>
       </div>
       {/* Virtualization note: for production we'd swap this for react-window;
           the list contract is simple enough that the swap is local. */}

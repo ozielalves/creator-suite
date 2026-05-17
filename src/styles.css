@@ -49,6 +49,8 @@
   --radius: 0.625rem;
 
   --background: oklch(0.992 0.002 247);
+  --background-gradient-from: oklch(0.99 0.04 265);
+  --background-gradient-to: oklch(0.955 0.03 247);
   --foreground: oklch(0.18 0.02 265);
   --surface: oklch(1 0 0);
   --surface-foreground: oklch(0.18 0.02 265);
@@ -91,6 +93,8 @@
 
 .dark {
   --background: oklch(0.16 0.018 265);
+  --background-gradient-from: oklch(0.24 0.06 265);
+  --background-gradient-to: oklch(0.12 0.028 265);
   --foreground: oklch(0.97 0.005 247);
   --surface: oklch(0.21 0.025 265);
   --surface-foreground: oklch(0.97 0.005 247);
@@ -127,6 +131,13 @@
   }
   html, body {
     background-color: var(--color-background);
+    background-image: linear-gradient(
+      165deg,
+      var(--background-gradient-from) 0%,
+      var(--background) 40%,
+      var(--background-gradient-to) 100%
+    );
+    background-attachment: fixed;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
