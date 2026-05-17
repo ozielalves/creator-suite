@@ -22,6 +22,11 @@ class MessagingServiceImpl {
       payload,
     );
   }
+  markAsRead(conversationId: string) {
+    return HttpClient.post<Conversation>(
+      `/messaging/conversations/${conversationId}/read`,
+    );
+  }
 }
 const messagingService = new MessagingServiceImpl();
 export { messagingService as MessagingService };

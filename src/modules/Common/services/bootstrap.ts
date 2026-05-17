@@ -190,6 +190,17 @@ function registerAll() {
   );
   registerHandler(
     "POST",
+    /^\/messaging\/conversations\/[^/]+\/read$/,
+    ({ url }) => {
+      const id = url.pathname.split("/")[3];
+      const conv = conversations.find((c) => c.id === id);
+      if (!conv) throw new MockError(404, "Conversation not found");
+      conv.unread = 0;
+      return conv;
+    },
+  );
+  registerHandler(
+    "POST",
     /^\/messaging\/conversations\/[^/]+\/messages$/,
     ({ url, body }) => {
       const id = url.pathname.split("/")[3];

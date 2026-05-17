@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, MessageSquare } from "lucide-react";
 import { useSWRConfig } from "swr";
 import { Avatar, Button, Card, EmptyState, Skeleton } from "@/modules/UI";
@@ -14,6 +14,7 @@ import type { SendMessagePayload } from "../types";
 export function MessagingPage() {
   const isMobile = useIsMobile();
   const { data: conversations, isLoading } = useConversations();
+  const { mutate } = useSWRConfig();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [mobileView, setMobileView] = useState<"list" | "thread">("list");
 
@@ -22,6 +23,17 @@ export function MessagingPage() {
     : (activeId ?? conversations?.[0]?.id ?? null);
 
   const activeConversation = conversations?.find((c) => c.id === selected);
+
+  useEffect(() => {
+    if (!selected) return;
+    const conversation = conversations?.find((c) => c.id === selected);
+    if (!conversation || conversation.unread === 0) return;
+
+    void (async () => {
+      await MessagingService.markAsRead(selected);
+      await mutate("/messaging/conversations");
+    })();
+  }, [selected, conversations, mutate]);
 
   function handleSelect(id: string) {
     setActiveId(id);

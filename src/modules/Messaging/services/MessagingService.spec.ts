@@ -61,6 +61,23 @@ describe("MessagingService", () => {
     );
   });
 
+  it("marks a conversation as read", async () => {
+    const conversation = {
+      id: "c_1",
+      participantId: "u_1",
+      participantName: "Maya",
+      lastMessage: "Hi",
+      lastMessageAt: "now",
+      unread: 0,
+    };
+    httpMock.post.mockResolvedValue(conversation);
+
+    await expect(MessagingService.markAsRead("c_1")).resolves.toEqual(conversation);
+    expect(httpMock.post).toHaveBeenCalledWith(
+      "/messaging/conversations/c_1/read",
+    );
+  });
+
   it("sends a message with media attachments", async () => {
     const attachments = [
       {
