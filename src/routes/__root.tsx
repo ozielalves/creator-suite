@@ -1,10 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  Outlet,
-  createRootRouteWithContext,
-  HeadContent,
-  Scripts,
-} from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { Suspense, useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
@@ -23,7 +18,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Creator Studio" },
       { name: "description", content: "Modern platform for independent creators." },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", href: "/assets/logo-oziel.svg", type: "image/svg+xml" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
