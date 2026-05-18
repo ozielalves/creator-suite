@@ -2,7 +2,6 @@
 
 # Creator Studio &middot; [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev) [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![TanStack Start](https://img.shields.io/badge/TanStack_Start-1.x-FF4154?style=flat-square)](https://tanstack.com/start) [![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com) [![Vitest](https://img.shields.io/badge/Vitest-4-6E9F18?style=flat-square&logo=vitest&logoColor=white)](https://vitest.dev) [![Bun](https://img.shields.io/badge/Bun-latest-000000?style=flat-square&logo=bun&logoColor=white)](https://bun.sh)
 
----
 
 ## Table of Contents
 
@@ -17,7 +16,6 @@
 - [Testing](#testing)
 - [License](#license)
 
----
 
 ## Overview
 
@@ -32,8 +30,6 @@ Creator Studio is a multi-feature creator platform with:
 
 All backend data is mocked in-memory via an interceptor layer, making the app fully runnable without any external services.
 
----
-
 ## Architecture Philosophy
 
 This project prioritizes **architecture quality over flashy features**. It is organized as a **modular monolith** where each business domain owns its components, hooks, services, types, and constants. The goal is to demonstrate how a senior/staff engineer might structure a front-end platform for a high-growth company.
@@ -46,8 +42,6 @@ Core principles:
 - **Testability** — Business logic is decoupled from React; utilities have colocated tests
 - **Design system thinking** — Reusable UI primitives with variants, accessibility, and consistent tokens
 - **No over-engineering** — No unnecessary abstractions; every layer has a clear purpose
-
----
 
 ## Tech Stack
 
@@ -77,7 +71,7 @@ Both are excellent. SWR was chosen for its minimal API surface and lighter bundl
 
 Auth state is simple (user + token + login/logout). Zustand provides exactly what's needed with zero boilerplate. For more complex domains, Redux Toolkit or TanStack Store could be substituted without touching UI code.
 
----
+
 
 ## Project Structure
 
@@ -104,8 +98,6 @@ src/
 ├── start.ts                # Start instance configuration
 └── styles.css              # Tailwind v4 entry + design tokens
 ```
-
----
 
 ## Module Organization
 
@@ -191,7 +183,6 @@ modules/
         └── SubscriptionService.ts
 ```
 
----
 
 ## Key Design Decisions
 
@@ -288,8 +279,6 @@ bun run build
 bun run preview
 ```
 
----
-
 ## Scripts
 
 | Script      | Command             | Description                      |
@@ -326,7 +315,6 @@ Example test locations:
 - `src/modules/Common/utils/format.spec.ts` — Date, currency, and number formatting
 - `src/modules/UI/Button/Button.spec.tsx` — Component rendering and interaction
 
----
 
 ## Design Tokens
 
@@ -338,7 +326,6 @@ This ensures:
 - Easy dark-mode extension (add a `dark` variant to `:root`)
 - Single source of truth for visual design
 
----
 
 ## License
 
