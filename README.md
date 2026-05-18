@@ -2,8 +2,6 @@
 
 # Creator Studio &middot; [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev) [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![TanStack Start](https://img.shields.io/badge/TanStack_Start-1.x-FF4154?style=flat-square)](https://tanstack.com/start) [![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com) [![Vitest](https://img.shields.io/badge/Vitest-4-6E9F18?style=flat-square&logo=vitest&logoColor=white)](https://vitest.dev) [![Bun](https://img.shields.io/badge/Bun-latest-000000?style=flat-square&logo=bun&logoColor=white)](https://bun.sh)
 
-A production-grade front-end platform demonstrating scalable architecture, modular organization, and modern engineering practices. Built as a reference implementation for high-growth applications requiring clean separation of concerns, testability, and maintainability.
-
 ---
 
 ## Table of Contents
