@@ -17,6 +17,12 @@ dist-ssr
 *.local
 .env
 
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/e2e/.auth/
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars

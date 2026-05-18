@@ -2,7 +2,6 @@
 
 # Creator Studio &middot; [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev) [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![TanStack Start](https://img.shields.io/badge/TanStack_Start-1.x-FF4154?style=flat-square)](https://tanstack.com/start) [![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com) [![Vitest](https://img.shields.io/badge/Vitest-4-6E9F18?style=flat-square&logo=vitest&logoColor=white)](https://vitest.dev) [![Bun](https://img.shields.io/badge/Bun-latest-000000?style=flat-square&logo=bun&logoColor=white)](https://bun.sh)
 
-
 ## Table of Contents
 
 - [Overview](#overview)
@@ -15,7 +14,6 @@
 - [Scripts](#scripts)
 - [Testing](#testing)
 - [License](#license)
-
 
 ## Overview
 
@@ -56,7 +54,7 @@ Core principles:
 | Charts         | Recharts                  | Declarative React charting for dashboard analytics                                    |
 | Forms          | React Hook Form + Zod     | Performant forms with schema validation                                               |
 | Icons          | Lucide React              | Consistent, lightweight SVG icon set                                                  |
-| Testing        | Vitest + Testing Library  | Fast unit tests with JSDOM and React Testing Library                                  |
+| Testing        | Vitest + Playwright       | Unit tests with Testing Library; E2E flows with Playwright                            |
 | Linting        | ESLint + Prettier         | Consistent code style and catch-at-build-time errors                                  |
 
 ### Why TanStack Start?
@@ -70,8 +68,6 @@ Both are excellent. SWR was chosen for its minimal API surface and lighter bundl
 ### Why Zustand over Redux / Context?
 
 Auth state is simple (user + token + login/logout). Zustand provides exactly what's needed with zero boilerplate. For more complex domains, Redux Toolkit or TanStack Store could be substituted without touching UI code.
-
-
 
 ## Project Structure
 
@@ -183,7 +179,6 @@ modules/
         └── SubscriptionService.ts
 ```
 
-
 ## Key Design Decisions
 
 ### 1. Service Layer
@@ -289,6 +284,8 @@ bun run preview
 | Preview     | `bun run preview`   | Preview production build locally |
 | Lint        | `bun run lint`      | ESLint check                     |
 | Format      | `bun run format`    | Prettier write                   |
+| Test        | `bun run test`      | Vitest unit/component suite      |
+| E2E         | `bun run test:e2e`  | Playwright end-to-end tests      |
 
 ---
 
@@ -310,11 +307,32 @@ bun run test:watch
 
 `bun test` also works: it runs a bridge in `src/test/` that delegates to Vitest (`bunfig.toml` limits Bun's scanner to that folder). Prefer `bun run test` for direct execution without the extra process.
 
+### End-to-end (Playwright)
+
+Install the Chromium browser once:
+
+```bash
+bun run test:e2e:install
+```
+
+Run E2E tests (starts the dev server automatically on port 3000):
+
+```bash
+bun run test:e2e
+```
+
+Interactive UI mode:
+
+```bash
+bun run test:e2e:ui
+```
+
+Specs live in `e2e/` and use the demo account from `.env.example` by default.
+
 Example test locations:
 
 - `src/modules/Common/utils/format.spec.ts` — Date, currency, and number formatting
 - `src/modules/UI/Button/Button.spec.tsx` — Component rendering and interaction
-
 
 ## Design Tokens
 
@@ -325,7 +343,6 @@ This ensures:
 - Consistent theming across the app
 - Easy dark-mode extension (add a `dark` variant to `:root`)
 - Single source of truth for visual design
-
 
 ## License
 
