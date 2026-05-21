@@ -30,7 +30,7 @@ All backend data is mocked in-memory via an interceptor layer, making the app fu
 
 ## Architecture Philosophy
 
-This project prioritizes **architecture quality over flashy features**. It is organized as a **modular monolith** where each business domain owns its components, hooks, services, types, and constants. The goal is to demonstrate how a senior/staff engineer might structure a front-end platform for a high-growth company.
+This project prioritizes **architecture quality over flashy features**. It is organized as a **modular monolith** where each business domain owns its components, hooks, services, types, and constants.
 
 Core principles:
 
