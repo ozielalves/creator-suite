@@ -39,7 +39,6 @@ Core principles:
 - **Single source of truth** — Services are singletons; state is centralized
 - **Testability** — Business logic is decoupled from React; utilities have colocated tests
 - **Design system thinking** — Reusable UI primitives with variants, accessibility, and consistent tokens
-- **No over-engineering** — No unnecessary abstractions; every layer has a clear purpose
 
 ## Tech Stack
 
